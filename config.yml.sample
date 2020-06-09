@@ -9,11 +9,11 @@ servers:
     enabled: true
     alias: redis1
     db: 0
-    host: "192.168.237.72"
+    host: "127.0.0.1"
     port: 7000
   redis2:
     enabled: true
     alias: redis2
     db: 0
-    host: "192.168.237.72"
+    host: "127.0.0.1"
     port: 7001

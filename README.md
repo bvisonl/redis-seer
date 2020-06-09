@@ -1,6 +1,6 @@
 # RedisSeer
 
-![GitHub go.mod Go version (subfolder of monorepo)](https://img.shields.io/github/go-mod/go-version/bvisonl/redis-seer) ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/bvisonl/redis-seer) [![Build Status](https://travis-ci.com/bvisonl/redis-seer.svg?token=HCrJv9pAbBM8v4eissjP&branch=master)](https://travis-ci.com/bvisonl/redis-seer)
+![GitHub go.mod Go version (subfolder of monorepo)](https://img.shields.io/github/go-mod/go-version/bvisonl/redis-seer) ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/bvisonl/redis-seer) [![Build Status](https://travis-ci.com/bvisonl/redis-seer.svg?token=HCrJv9pAbBM8v4eissjP&branch=master)](https://travis-ci.com/bvisonl/redis-seer) ![GitHub stars](https://img.shields.io/github/stars/bvisonl/redis-seer)
 
 
 > :warning: This is currently just a proof of concept and it came up from an exercise I wanted to do because I was not able to find a simple Redis proxy/HA that worked for standalone environments that supported both balancing and failover (like how AWS ElastiCache works).
