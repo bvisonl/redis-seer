@@ -1,9 +1,25 @@
 package main
 
+import (
+	"flag"
+	"log"
+)
+
 func main() {
 
-	// Load servers configuration
-	LoadConfig()
+	// Configurations by flag
+	configPath := flag.String("c", "./config.yml", "Configuration file path")
+	debug := flag.Bool("d", false, "Enable debugging")
+	flag.Parse()
+
+	log.Println(*configPath)
+
+	// Load configuration
+	LoadConfig(*configPath)
+
+	if *debug == true {
+		Config.Debug = true
+	}
 
 	// Start the monitoring service
 	go StartMonitor()

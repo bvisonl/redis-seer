@@ -2,16 +2,17 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
+	"math/rand"
 	"net"
-	"time"
 	"os"
 	"strconv"
-	"math/rand"
 
-	"github.com/bvisonl/redis-standalone-proxy/redis"
+	"github.com/bvisonl/redis-seer/redis"
 )
 
+// StartServer - Starts the RedisSeer server to listen for connections
 func StartServer() {
 	port := Config.Port
 
@@ -36,26 +37,18 @@ func StartServer() {
 	}
 }
 
-// Per connection functions
-
 func initProxy(proxyConnection net.Conn) {
 
 	defer proxyConnection.Close()
 
 	// Create a new connection with all redis servers
-	redisConnections := make(map[string]*RedisConnection, 0)
+	redisConnections := make(map[string]net.Conn, 0)
 
 	// Establish connection with all the servers
 	for key, server := range Config.Servers {
 
 		redisConnection, err := net.Dial("tcp4", server.Host+":"+strconv.Itoa(server.Port))
-
-		redisConnections[key] = &RedisConnection{
-			Name:       key,
-			Host: 	    server.Host,
-			Port:		server.Port,
-			Connection: &redisConnection,
-		}
+		redisConnections[key] = redisConnection
 
 		if err != nil {
 			log.Printf("An error occurred connection to server: %s. Error: %s\r\n", key, err)
@@ -69,7 +62,7 @@ func initProxy(proxyConnection net.Conn) {
 
 }
 
-func proxy(proxyConnection net.Conn, redisConnections map[string]*RedisConnection) {
+func proxy(proxyConnection net.Conn, redisConnections map[string]net.Conn) {
 
 	proxyReader := redis.NewReader(proxyConnection)
 
@@ -77,6 +70,9 @@ func proxy(proxyConnection net.Conn, redisConnections map[string]*RedisConnectio
 		// Start reading data
 		proxyData, err := proxyReader.ReadObject()
 		if err != nil {
+			if err == io.EOF {
+				continue
+			}
 			fmt.Printf("Error reading data. Error: %s\r\n", err)
 			break
 		}
@@ -87,24 +83,18 @@ func proxy(proxyConnection net.Conn, redisConnections map[string]*RedisConnectio
 		selectedRedis := selectServer()
 
 		// Send data to the selected redis
-		if redisConnections[selectedRedis].Connection == nil {
-			redisConnection, err := net.Dial("tcp4", redisConnections[selectedRedis].Host+":"+strconv.Itoa(redisConnections[selectedRedis].Port))
-			if err != nil {
-				// THIS SHOULD NOT HAPPEN BECAUSE THE SELECTION PROCESS SHOULD RETURN AN ALIVE REDIS
-				log.Printf("An error occurred connection to server: %s. Error: %s\r\n", redisConnections[selectedRedis].Name, err)
-				time.Sleep(2 * time.Second)
-				continue
-			}
-			redisConnections[selectedRedis].Connection = &redisConnection
+		if redisConnections[selectedRedis] == nil {
+			proxyConnection.Write([]byte("-Error Unable to contact Redis\r\n"))
+			continue
 		}
 
-		(*redisConnections[selectedRedis].Connection).Write(proxyData)
+		(redisConnections[selectedRedis]).Write(proxyData)
 
 		// Get data from selected redis
-		redisReader := redis.NewReader((*redisConnections[selectedRedis].Connection))
+		redisReader := redis.NewReader((redisConnections[selectedRedis]))
 		redisData, err := redisReader.ReadObject()
 		if err != nil {
-			fmt.Printf("Error reading data from Redis %s. Error: %s\r\n", redisConnections[selectedRedis].Name, err)
+			fmt.Printf("Error reading data from Redis %s. Error: %s\r\n", selectedRedis, err)
 			continue
 		}
 
@@ -115,13 +105,11 @@ func proxy(proxyConnection net.Conn, redisConnections map[string]*RedisConnectio
 
 }
 
-
-
 func selectServer() string {
 
 	numServers := len(Config.Servers)
 	candidate := rand.Intn(numServers)
-	i := 0;
+	i := 0
 
 	lastAlive := ""
 
@@ -139,6 +127,5 @@ func selectServer() string {
 	}
 
 	return lastAlive
-
 
 }

@@ -1,4 +1,4 @@
-module github.com/bvisonl/redis-standalone-proxy
+module github.com/bvisonl/redis-seer
 
 go 1.13
 

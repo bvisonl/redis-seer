@@ -3,23 +3,22 @@ package main
 import (
 	"fmt"
 	"log"
-	"time"
 	"net"
 	"strconv"
+	"time"
 
-	"github.com/bvisonl/redis-standalone-proxy/redis"
-
+	"github.com/bvisonl/redis-seer/redis"
 )
 
 func StartMonitor() {
 
 	// Interval between monitoring commands
-    interval := strconv.Itoa(Config.MonitorInterval) + "s"
+	interval := strconv.Itoa(Config.MonitorInterval) + "s"
 	monitorInterval, err := time.ParseDuration(interval)
 
 	if err != nil {
 		log.Printf("Invalid interval provided %s for the monitor. Error: %s\r\n", interval, err)
-		return;
+		return
 	}
 
 	// Monitor all servers in the list
@@ -29,14 +28,14 @@ func StartMonitor() {
 	}
 }
 
-func monitor(name string, server *RedisServer, interval time.Duration) {
+func monitor(name string, server *RedisServerConfig, interval time.Duration) {
 
 	redisConnection, err := net.Dial("tcp4", server.Host+":"+strconv.Itoa(server.Port))
 	if err != nil {
 		log.Printf("Error connecting to redis %s. Will attempt to reconnect in the next interval. Error: %s\r\n", name, err)
 		time.Sleep(interval)
 		go monitor(name, server, interval)
-		return;
+		return
 	}
 
 	log.Printf("Started monitoring %s.\r\n", name)

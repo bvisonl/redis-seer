@@ -3,14 +3,14 @@
 ![GitHub go.mod Go version (subfolder of monorepo)](https://img.shields.io/github/go-mod/go-version/bvisonl/redis-seer) ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/bvisonl/redis-seer) [![Build Status](https://travis-ci.com/bvisonl/redis-seer.svg?token=HCrJv9pAbBM8v4eissjP&branch=master)](https://travis-ci.com/bvisonl/redis-seer) ![GitHub stars](https://img.shields.io/github/stars/bvisonl/redis-seer)
 
 
-> :warning: This is currently just a proof of concept and it came up from an exercise I wanted to do because I was not able to find a simple Redis proxy/HA that worked for standalone environments that supported both balancing and failover (like how AWS ElastiCache works).
+> :warning: This is currently just a proof of concept and it came up from an exercise I wanted to do because I was not able to find a simple Redis proxy/HA that worked for standalone environments that supported both balancing and failover (like how AWS ElastiCache works). I am pretty sure that additional impact in performance will show up when performing benchmarks but if it's something tolerable then I might consider using this in production for non-cluster and non-sentinel environments.
 
-## Requirements
+## Requirements :clipboard:
 
 * `Go` if you want to build the project from source (otherwise download one of the releases)
 
 
-## Installation
+## Installation :construction:
 ```go
 # Download from the repository
 git clone https://github.com/bvison/redis-seer.git
@@ -20,7 +20,7 @@ go build
 
 You should see a `redis-seer` binary inside the folder
 
-## Configuration
+## Configuration :customs:
 
 `redis-seer` feeds its configuration from a YAML file  that. This is a full sample configuration:
 
@@ -47,6 +47,8 @@ servers:
 
 ```
 
+As you can see things like database selection and authentication should be configured here and not in the real client.
+
 Some parameters that may need explanation:
 
 * **port:** Port on which `RedisSeer` will listen for requests.
@@ -64,7 +66,7 @@ Some parameters that may need explanation:
     * **load**: The proxy will keep note on the load sent to the server and will pick the least targeted server.
 
 
-## Usage
+## Usage :arrow_forward:
 
 **On Linux**:
 ```bash
@@ -75,7 +77,12 @@ $ ./redis-seer -c config.yml
 $ redis-seer.exe -c config.yml
 ```
 
-## Example
+Some flags that can be used:
+
+* **-c**: Specify the configuration file to use
+* **-d**: Enable additional debugging output
+
+## Example :electric_plug:
 
 Inside the `tests/redis` folder there is a `docker-compose.yml` file that boots up 3 redis instances to be used with the tests and if you want to you can test `redis-seer` with them.
 
@@ -95,8 +102,9 @@ Also, inside `tests/` there is a `config.yml` with the sample configuration to b
 ./redis-seer -c tests/config.yml
 ```
 
-## TODO
+## TODO :wrench:
 
+* Add more configuration options (i.e. authentication)
 * Docker deployment
 * Implement selection method
 * Add Master monitoring process
@@ -110,4 +118,4 @@ Also, inside `tests/` there is a `config.yml` with the sample configuration to b
 * Run benchmarks
 * Ansible deployment
 
-## Contribution
+## Contribution :construction_worker:
