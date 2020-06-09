@@ -1,0 +1,19 @@
+---
+debug: true
+port: 5100
+mode: "random" # round-robin, random, load
+readSlaveOnly: true
+monitorInterval: 1
+servers:
+  redis1:
+    enabled: true
+    alias: redis1
+    db: 0
+    host: "192.168.237.72"
+    port: 7000
+  redis2:
+    enabled: true
+    alias: redis2
+    db: 0
+    host: "192.168.237.72"
+    port: 7001
