@@ -14,14 +14,17 @@ import (
 	"errors"
 	"io"
 	"strconv"
+	"strings"
 )
 
 const (
-	SIMPLE_STRING = '+'
-	BULK_STRING   = '$'
-	INTEGER       = ':'
-	ARRAY         = '*'
-	ERROR         = '-'
+	SIMPLE_STRING         = '+'
+	BULK_STRING           = '$'
+	INTEGER               = ':'
+	ARRAY                 = '*'
+	ERROR                 = '-'
+	COMMAND_TARGET_MASTER = "Master"
+	COMMAND_TARGET_SLAVE  = "Slave"
 )
 
 var (
@@ -53,6 +56,21 @@ func (r *RESPReader) ReadObject() ([]byte, error) {
 	default:
 		return nil, ErrInvalidSyntax
 	}
+}
+
+// GetTarget - Should return if a command should go either to a Slave or to a Master
+func GetTarget(command []byte) (target string, err error) {
+
+	cmd := strings.Split(string(command), "\r\n")
+
+	switch string(cmd[2]) {
+	case "SET":
+		return COMMAND_TARGET_MASTER, nil
+	default:
+		return COMMAND_TARGET_SLAVE, nil
+	}
+
+	return "", errors.New("Invalid command")
 }
 
 func (r *RESPReader) readLine() (line []byte, err error) {

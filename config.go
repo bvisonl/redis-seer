@@ -2,39 +2,32 @@ package main
 
 import (
 	"log"
-	"net"
 	"os"
 
 	"gopkg.in/yaml.v2"
 )
 
-// YamlConfig - Configuration structure
+// Config - Global configuration variable
+var Config SeerConfig
+
+// SeerConfig - Configuration structure
 type SeerConfig struct {
 	Debug           bool                          `yaml:"debug"`
 	Port            int                           `yaml:"port"`
 	MonitorInterval int                           `yaml:"monitorInterval"`
 	Servers         map[string]*RedisServerConfig `yaml:"servers"` // TODO: Oh no, map of struct pointer...
-	CurrentMaster   string
+	CurrentMaster   string                        `yaml:"master"`
 }
 
+// RedisServerConfig - Redis Server configuration structure
 type RedisServerConfig struct {
 	Alias    string `yaml:"alias"`
 	Database int    `yaml:"db"`
 	Host     string `yaml:"host"`
 	Port     int    `yaml:"port"`
+	Enabled  bool   `yaml:"enabled"`
 	Alive    bool
 }
-
-type RedisConnection struct {
-	ServerConfig RedisServerConfig
-	Connection   *net.Conn
-}
-
-// Config - Global configuration variable
-var Config SeerConfig
-
-// RedisMasterKey - Current redis master
-var RedisMasterKey string
 
 // LoadConfig - Load the configuration from ./config.yml
 func LoadConfig(configPath string) {
@@ -54,7 +47,9 @@ func LoadConfig(configPath string) {
 	}
 
 	// Initialize default values
+	Config.CurrentMaster = "redis1"
 	for _, server := range Config.Servers {
 		server.Alive = true
 	}
+
 }

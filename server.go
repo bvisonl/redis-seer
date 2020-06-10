@@ -80,7 +80,18 @@ func proxy(proxyConnection net.Conn, redisConnections map[string]net.Conn) {
 		// Select a redis server
 		// TODO: Implement selection algorithm
 		// TODO: readOnlyFromSlave parameter in config.yml should be considered
-		selectedRedis := selectServer()
+		target, err := redis.GetTarget(proxyData)
+		if err != nil {
+			proxyConnection.Write([]byte("-Error " + err.Error() + "\r\n"))
+			continue
+		}
+		selectedRedis, err := selectServer(target)
+		fmt.Println("Sending to " + selectedRedis)
+
+		if err != nil {
+			proxyConnection.Write([]byte("-Error " + err.Error() + "\r\n"))
+			continue
+		}
 
 		// Send data to the selected redis
 		if redisConnections[selectedRedis] == nil {
@@ -105,13 +116,17 @@ func proxy(proxyConnection net.Conn, redisConnections map[string]net.Conn) {
 
 }
 
-func selectServer() string {
+func selectServer(target string) (lastAlive string, err error) {
+
+	if target == "Master" {
+		return Config.CurrentMaster, nil
+	}
 
 	numServers := len(Config.Servers)
 	candidate := rand.Intn(numServers)
 	i := 0
 
-	lastAlive := ""
+	lastAlive = ""
 
 	for key, server := range Config.Servers {
 
@@ -120,12 +135,12 @@ func selectServer() string {
 		}
 
 		if i == candidate && server.Alive == true {
-			return key
+			return key, nil
 		}
 
 		i++
 	}
 
-	return lastAlive
+	return lastAlive, nil
 
 }

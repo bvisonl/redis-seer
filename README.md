@@ -31,6 +31,7 @@ port: 5100
 mode: "pick-one" # round-robin, random, pick one, load
 readSlaveOnly: true
 monitorInterval: 1
+master: "redis1"
 db: 0
 servers:
   redis1:
@@ -41,7 +42,6 @@ servers:
   redis2:
     enabled: true
     alias: redis2
-    db: 0
     host: "192.168.237.72"
     port: 7001
 
@@ -52,6 +52,8 @@ As you can see things like database selection and authentication should be confi
 Some parameters that may need explanation:
 
 * **port:** Port on which `RedisSeer` will listen for requests.
+
+* **master:** The master server to set initially. If failover is enabled then this is not required as the boot process will ask the servers which one is the master.
 
 * **readSlaveOnly:** This will avoid sending commands such as `GET` to the current master.
 

@@ -22,8 +22,10 @@ func StartMonitor() {
 	}
 
 	// Monitor all servers in the list
-	// TODO: Enable/Disable servers
 	for key, server := range Config.Servers {
+		if server.Enabled == false {
+			continue
+		}
 		go monitor(key, server, monitorInterval)
 	}
 }
