@@ -1,11 +1,14 @@
 # RedisSeer
 
-<img src="./doc/logo.svg">
+<div style="text-align:center"><img src="./doc/logo.svg"></div>
 
 ![GitHub go.mod Go version (subfolder of monorepo)](https://img.shields.io/github/go-mod/go-version/bvisonl/redis-seer) ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/bvisonl/redis-seer) [![Build Status](https://travis-ci.com/bvisonl/redis-seer.svg?token=HCrJv9pAbBM8v4eissjP&branch=master)](https://travis-ci.com/bvisonl/redis-seer) ![GitHub stars](https://img.shields.io/github/stars/bvisonl/redis-seer)
 
+A standalone Redis proxy with keepalive and master failover support.
 
 > :warning: This is currently just a proof of concept and it came up from an exercise I wanted to do because I was not able to find a simple Redis proxy/HA that worked for standalone environments that supported both balancing and failover (like how AWS ElastiCache works). I am pretty sure that additional impact in performance will show up when performing benchmarks but if it's something tolerable then I might consider using this in production for non-cluster and non-sentinel environments.
+
+<div style="text-align:center"><img src="./doc/diagrams/redis-seer-sample.png"></div>
 
 ## Requirements :clipboard:
 
