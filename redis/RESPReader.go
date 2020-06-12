@@ -73,6 +73,22 @@ func GetTarget(command []byte) (target string, err error) {
 	return "", errors.New("Invalid command")
 }
 
+// InfoToMap - Map an info response to a map
+func InfoToMap(info []byte) (result map[string]string, err error) {
+	result = make(map[string]string, 0)
+	values := strings.Split(string(info), "\r\n")
+	for _, value := range values {
+		if strings.Contains(value, ":") == false {
+			continue
+		}
+		entry := strings.Split(value, ":")
+		result[entry[0]] = entry[1]
+	}
+
+	return result, nil
+
+}
+
 func (r *RESPReader) readLine() (line []byte, err error) {
 	line, err = r.ReadBytes('\n')
 	if err != nil {

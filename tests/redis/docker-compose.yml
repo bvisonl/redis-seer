@@ -2,15 +2,19 @@ version: "2"
 services:
   redis1:
     image: redis:5
-    ports:
-      - "7000:7000"
+    network_mode: host
     volumes:
       - ./7000.conf:/redis.conf
     command: "redis-server /redis.conf"
   redis2:
     image: redis:5
-    ports:
-      - "7001:7001"
+    network_mode: host
     volumes:
       - ./7001.conf:/redis.conf
+    command: "redis-server /redis.conf"
+  redis3:
+    image: redis:5
+    network_mode: host
+    volumes:
+      - ./7002.conf:/redis.conf
     command: "redis-server /redis.conf"

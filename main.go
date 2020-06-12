@@ -15,15 +15,15 @@ func main() {
 	log.Println(*configPath)
 
 	// Load configuration
-	LoadConfig(*configPath)
+	loadConfig(*configPath)
 
 	if *debug == true {
-		Config.Debug = true
+		seerConfig.Debug = true
 	}
 
 	// Start the monitoring service
-	go StartMonitor()
+	go startMonitor()
 
 	// Start listening for connections
-	StartServer()
+	startServer()
 }

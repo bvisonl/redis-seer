@@ -1,6 +1,6 @@
 # RedisSeer
 
-<div style="text-align:center"><img src="./doc/logo.svg"></div>
+<div style="text-align:center"><img src="./doc/logo.png"></div>
 
 ![GitHub go.mod Go version (subfolder of monorepo)](https://img.shields.io/github/go-mod/go-version/bvisonl/redis-seer) ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/bvisonl/redis-seer) [![Build Status](https://travis-ci.com/bvisonl/redis-seer.svg?token=HCrJv9pAbBM8v4eissjP&branch=master)](https://travis-ci.com/bvisonl/redis-seer) ![GitHub stars](https://img.shields.io/github/stars/bvisonl/redis-seer)
 
@@ -33,8 +33,9 @@ You should see a `redis-seer` binary inside the folder
 ---
 debug: true
 port: 5100
-mode: "pick-one" # round-robin, random, pick one, load
+selectionMode: "random" # round-robin, random, load
 readSlaveOnly: true
+enableFailover: true
 monitorInterval: 1
 master: "redis1"
 db: 0
@@ -42,13 +43,14 @@ servers:
   redis1:
     enabled: true
     alias: redis1
-    host: "192.168.237.72"
+    host: "127.0.0.1"
     port: 7000
   redis2:
     enabled: true
     alias: redis2
-    host: "192.168.237.72"
+    host: "127.0.0.1"
     port: 7001
+
 
 ```
 
@@ -62,14 +64,15 @@ Some parameters that may need explanation:
 
 * **readSlaveOnly:** This will avoid sending commands such as `GET` to the current master.
 
+* **enableFailover:** Setting this to true will trigger a failover process when the master fails.
+
 * **monitorInterval:** The interval on which the servers will be contacted for things like: checking the master, pinging the slaves, and also reconnecting when a connection drops.
 
 * **db:** Database to use when connecting to the redis servers. As of right now if multiple databases are needed additional instances of `RedisSeer` with different configuration files should be deployed.
 
-* **mode:** The selection process to be used when picking a server to send the command to.
+* **selectionMode:** The selection process to be used when picking a server to send the command to.
     * **round-robin**: Typical round-robin method, the servers will be selected in a sequential way.
-    * **random**: A random server will be picked from the list.
-    * **pick-one** *(default)*: This is the default, a random server will be picked and it will be used for future commands until that connection drops then the process will be repeated.
+    * **random** *(default)*: A random server will be picked from the list.
     * **load**: The proxy will keep note on the load sent to the server and will pick the least targeted server.
 
 
@@ -110,18 +113,22 @@ Also, inside `tests/` there is a `config.yml` with the sample configuration to b
 ```
 
 ## TODO :wrench:
-
+* Ability to disable failover (things like AWS ElastiCache have the SLAVEOF command blocked.)
 * Add more configuration options (i.e. authentication)
-* Docker deployment
+* Add Makefile
+* Add an API
+* Docker deployment & Build
 * Implement selection method
 * Add Master monitoring and failover process
 * Add config file as an argument
 * Organize code structure
-* Make use of channel
+* Make use of channels to improve communication
 * Improve error handling
-* Handle connection changes appropriately
+* Handle connection changes more appropriately
 * Add tests
 * Run benchmarks
 * Ansible deployment
 
 ## Contribution :construction_worker:
+
+TBD.
