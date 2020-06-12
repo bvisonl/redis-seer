@@ -61,8 +61,6 @@ Some parameters that may need explanation:
 
 * **port:** Port on which `RedisSeer` will listen for requests.
 
-* **master:** The master server to set initially. If failover is enabled then this is not required as the boot process will ask the servers which one is the master.
-
 * **readSlaveOnly:** This will avoid sending commands such as `GET` to the current master.
 
 * **enableFailover:** Setting this to true will trigger a failover process when the master fails.
