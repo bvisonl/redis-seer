@@ -30,14 +30,12 @@ You should see a `redis-seer` binary inside the folder
 `redis-seer` feeds its configuration from a YAML file  that. This is a full sample configuration:
 
 ```yaml
----
 debug: true
 port: 5100
 selectionMode: "random" # round-robin, random, load
 readSlaveOnly: true
 enableFailover: true
 monitorInterval: 1
-master: "redis1"
 db: 0
 servers:
   redis1:
@@ -50,8 +48,11 @@ servers:
     alias: redis2
     host: "127.0.0.1"
     port: 7001
-
-
+  redis3:
+    enabled: true
+    alias: redis3
+    host: "127.0.0.1"
+    port: 7002
 ```
 
 As you can see things like database selection and authentication should be configured here and not in the real client.

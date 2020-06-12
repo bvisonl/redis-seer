@@ -1,19 +1,24 @@
 ---
 debug: true
 port: 5100
-mode: "random" # round-robin, random, load
+selectionMode: "random" # round-robin, random, load
 readSlaveOnly: true
+enableFailover: true
 monitorInterval: 1
+db: 0
 servers:
   redis1:
     enabled: true
     alias: redis1
-    db: 0
     host: "127.0.0.1"
     port: 7000
   redis2:
     enabled: true
     alias: redis2
-    db: 0
     host: "127.0.0.1"
     port: 7001
+  redis3:
+    enabled: true
+    alias: redis3
+    host: "127.0.0.1"
+    port: 7002
